@@ -1,17 +1,38 @@
+import threading
+import time
+import concurrent.futures
 from API import *
 from data import *
 
-parametros = generate_params()
-dadoDeTodosMeses = []
-
-for mes in parametros:
+def fetch_data(params, todosMesesData):
     page = 1
     while True:
-        dado = getAuxEmergencial_municipio(mes, page=page)
-        if not dado:
-            break
-        print(f"Obtendo dados.. os parâmetros são: {mes}")
-        dadoDeTodosMeses.extend(dado)
-        page += 1
+        try:
+            dados = get_bolsaFBeneficiario_municipio(params, page=page)
+            if not dados:
+                break
+            print(f"Obtendo dados da página {page} para os parâmetros: {params}")
+            todosMesesData.extend(dados)
+            page += 1
+        except Exception as e:
+            print(f"Erro na solicitação: {e}")
+            print("Conexão recusada pelo servidor. Aguardando 5 segundos antes de tentar novamente...")
+            time.sleep(5)
+            continue
 
-save_data_to_csv(dadoDeTodosMeses, 'bolsa_familiaAux_municipio')
+parametros = generate_params()
+
+todosMesesData = []
+
+numThreads = 9999
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=numThreads) as executor:
+    futures = [executor.submit(fetch_data, params, todosMesesData) for params in parametros]
+    for future in concurrent.futures.as_completed(futures):
+        future.result()
+
+for future in futures:
+    if not future.done():
+        print("Uma ou mais tarefas não foram concluídas")
+
+save_data_to_csv(todosMesesData, 'bolsa_familia')

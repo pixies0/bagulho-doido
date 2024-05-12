@@ -11,7 +11,7 @@ def get_data_from_api(endpoint, params=None, page=1):
     try:
         params = params or {}
         params['pagina'] = page
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers, params=params, verify=False)
         if response.status_code == 200:
             return response.json()
         else:
