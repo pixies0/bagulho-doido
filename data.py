@@ -53,7 +53,7 @@ def save_data_to_csv(objetos, endpoint):
         return [nomeIBGE, data_formatada, valor, quantidadeBeneficiados]
 
     # Usar uma das funções acima [dentro].
-    dados = [extract_dataAuxEmergencial_municipio(objeto) for objeto in objetos]
+    dados = [extract_dataBeneficiario_municipio(objeto) for objeto in objetos]
 
     timestamp = datetime.now().strftime("%H%M")
     nome_arquivo = f'relatorios/{endpoint}_{timestamp}.csv'
@@ -107,4 +107,4 @@ def save_data_to_csv(objetos, endpoint):
             arquivo.close()
 
     # Usar alguma função de modo de gravação
-    save_to_csv_auxEmergencial(dados, nome_arquivo)
+    save_to_csv_bolsaFBeneficiario_municipio(dados, nome_arquivo)
