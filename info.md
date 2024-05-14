@@ -11,3 +11,5 @@
 ### Sistema Integrado de Administração de Recursos Humanos (Siape)
 
 ### Sistema Integrado de Administração Financeira do Governo Federal (Siafi)
+
+### Palmas, Araguaína, (Gurupi ou Porto), Paráiso

@@ -1,18 +1,20 @@
 import threading
 import time
+import sys
 import concurrent.futures
 from API import *
 from data import *
 
-def fetch_data(params, todosMesesData):
+def fetch_data(params, todosDados, lock=None):
     page = 1
     while True:
         try:
-            dados = get_bolsaFBeneficiario_municipio(params, page=page)
+            dados = get_bolsaFbeneficiado1_nis(params, page=page)
             if not dados:
                 break
-            print(f"Obtendo dados da página {page} para os parâmetros: {params}")
-            todosMesesData.extend(dados)
+            with lock:
+                print(f"Obtendo dados da página {page} para os parâmetros: {params}")
+                todosDados.extend(dados)
             page += 1
         except Exception as e:
             print(f"Erro na solicitação: {e}")
@@ -21,13 +23,14 @@ def fetch_data(params, todosMesesData):
             continue
 
 parametros = generate_params()
+# print(parametros)
+lock = threading.Lock()
 
-todosMesesData = []
-
-numThreads = 9999
+todosDados = []
+numThreads = 100
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=numThreads) as executor:
-    futures = [executor.submit(fetch_data, params, todosMesesData) for params in parametros]
+    futures = [executor.submit(fetch_data, params, todosDados,lock) for params in parametros]
     for future in concurrent.futures.as_completed(futures):
         future.result()
 
@@ -35,4 +38,4 @@ for future in futures:
     if not future.done():
         print("Uma ou mais tarefas não foram concluídas")
 
-save_data_to_csv(todosMesesData, 'bolsa_familia')
+save_data_to_csv(todosDados, 'bolsa_FamiliaNIS1')

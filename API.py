@@ -1,7 +1,14 @@
+from dotenv import load_dotenv
 import requests
+import os
+
+load_dotenv()
+
 
 def get_data_from_api(endpoint, params=None, page=1):
-    token = "6b2db1d85ee7091f4c256e1152dd4630"
+
+    # Criar variavel de ambiente
+    token = os.getenv('TOKEN')
 
     headers = {"chave-api-dados": token}
 
@@ -11,7 +18,7 @@ def get_data_from_api(endpoint, params=None, page=1):
     try:
         params = params or {}
         params['pagina'] = page
-        response = requests.get(url, headers=headers, params=params, verify=False)
+        response = requests.get(url, headers=headers, params=params)
         if response.status_code == 200:
             return response.json()
         else:
@@ -23,11 +30,23 @@ def get_data_from_api(endpoint, params=None, page=1):
 
 # USAR ALGUMA DAS FUNÇÕES ABAIXO NA MAIN
 
-def get_bolsaFBeneficiario_municipio(params, page=1):
+def get_bolsaFBeneficiado1_municipio(params, page=1):
     endpoint = "bolsa-familia-sacado-beneficiario-por-municipio"
     return get_data_from_api(endpoint, params, page)
 
-def get_bolsaFamilia_municipio(params, page=1):
+def get_bolsaFBeneficiado2_municipio(params, page=1):
+    endpoint = "auxilio-brasil-sacado-beneficiario-por-municipio"
+    return get_data_from_api(endpoint, params, page)
+
+def get_bolsaFBeneficiado3_municipio(params, page=1):
+    endpoint = "novo-bolsa-familia-sacado-beneficiario-por-municipio"
+    return get_data_from_api(endpoint, params, page)
+
+def get_bolsaFbeneficiado1_nis(params, page=1):
+    endpoint = "bolsa-familia-sacado-por-nis"
+    return get_data_from_api(endpoint, params, page)
+
+def get_bolsaFamilia1_municipio(params, page=1):
     endpoint = "bolsa-familia-por-municipio"
     return get_data_from_api(endpoint, params, page)
 
